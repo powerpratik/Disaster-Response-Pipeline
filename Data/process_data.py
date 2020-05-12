@@ -64,7 +64,7 @@ def save_data(df,database_path):
 
 def main():
     if len(sys.argv)==4:
-         database_path, messages_path, categories_path = sys.argv[1:]
+         messages_path, categories_path, database_path = sys.argv[1:]
          print('Loading Data:....\n MESSAGES:{}\n CATEGORIES:{}\n'.format(messages_path,categories_path))
          
          print('Data Frame with 5 rows ')
@@ -82,9 +82,12 @@ def main():
          print('Successfully saved the data to DataBase..')
 
     else:
-        print('Please provide the file path of Database to save the cleaned data followed by the datasets' \
-        'messages.csv and categories.csv as the argument to the call. \n\n python etldata.py ' \ 
-        'Disaster.db disaster_messages.csv disaster_categories.csv')
-
+        print('Please provide the filepaths of the messages and categories '\
+              'datasets as the first and second argument respectively, as '\
+              'well as the filepath of the database to save the cleaned data '\
+              'to as the third argument. \n\nExample: python process_data.py '\
+              'disaster_messages.csv disaster_categories.csv '\
+              'DisasterResponse.db')
+              
 if __name__=='__main__':
     main()
