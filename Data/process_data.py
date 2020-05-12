@@ -55,7 +55,7 @@ def clean_data(df):
 
     df.replace([np.inf,-np.inf],np.nan,inplace=True)
     df.fillna(0,inplace=True)
-    df.drop_duplicates()
+    return df.drop_duplicates()
 
 def save_data(df,database_path):
     # ### 7. Save the clean dataset into an sqlite database.
@@ -74,8 +74,7 @@ def main():
          df= clean_data(df)
 
          print('Rows after Cleaning data')
-         print(df.head())
-
+        
          print('Saving Data to....\n    DataBase:{}'.format(database_path))
          save_data(df,database_path)
 
@@ -88,6 +87,6 @@ def main():
               'to as the third argument. \n\nExample: python process_data.py '\
               'disaster_messages.csv disaster_categories.csv '\
               'DisasterResponse.db')
-              
+
 if __name__=='__main__':
     main()
