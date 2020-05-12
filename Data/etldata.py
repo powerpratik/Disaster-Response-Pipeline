@@ -9,23 +9,21 @@ import pandas as pd
 import numpy as np
 from sqlalchemy import create_engine
 
-def load_data():
+def load_data(messages_path,categories_path):
     # load messages dataset
-    messages = pd.read_csv('messages.csv')
+    messages = pd.read_csv(messages_path)
     messages.head(20)
 
     # load categories dataset
-    categories = pd.read_csv('categories.csv')
+    categories = pd.read_csv(categories_path)
     categories.head(20)
 
     # merge datasets
     df = pd.merge(left=messages,right=categories,on='id')
-    df.head(20)
-
+    
     # ### . Split `categories` into separate 36 category columns.
     
     categories =categories['categories'].str.split(';',expand=True)
-    categories.head()
 
     # select the first row of the categories dataframe
     row = categories[0:1]
@@ -35,7 +33,6 @@ def load_data():
 
     # rename the columns of `categories`
     categories.columns = category_colnames
-    categories.head()
 
     # ###  Convert category values to just numbers 0 or 1.
     for column in categories:
@@ -44,15 +41,12 @@ def load_data():
         
         # convert column from string to numeric
         categories[column] = categories[column].astype(int)
-    categories.head()
-
-
+    
     # drop the original categories column from `df` because it's no longer needed
     df.drop(labels=['categories'],axis=1,inplace=True)
-    df.head()
     # concatenate the original dataframe with the new `categories` dataframe
     df = pd.concat([df,categories],axis=1)
-    df.head()
+    print(df.head())
     return df
 
 
@@ -63,11 +57,34 @@ def clean_data(df):
     df.fillna(0,inplace=True)
     df.drop_duplicates()
 
-def save_data():
-# ### 7. Save the clean dataset into an sqlite database.
-engine = create_engine('sqlite:///InsertDatabaseName.db')
-df.to_sql('InsertTableName', engine, index=False)
+def save_data(df,database_path):
+    # ### 7. Save the clean dataset into an sqlite database.
+    engine = create_engine('sqlite:///'+database_path)
+    df.to_sql('table', engine, index=False)
 
+def main():
+    if len(sys.argv)==4:
+         database_path, messages_path, categories_path = sys.argv[1:]
+         print('Loading Data:....\n MESSAGES:{}\n CATEGORIES:{}\n'.format(messages_path,categories_path))
+         
+         print('Data Frame with 5 rows ')
+         df=load_data(messages_path,categories_path)
+         
+         print('Cleaning Data')
+         df= clean_data(df)
 
+         print('Rows after Cleaning data')
+         print(df.head())
 
+         print('Saving Data to....\n    DataBase:{}'.format(database_path))
+         save_data(df,database_path)
 
+         print('Successfully saved the data to DataBase..')
+
+    else:
+        print('Please provide the file path of Database to save the cleaned data followed by the datasets' \
+        'messages.csv and categories.csv as the argument to the call. \n\n python etldata.py ' \ 
+        'Disaster.db disaster_messages.csv disaster_categories.csv')
+
+if __name__=='__main__':
+    main()
