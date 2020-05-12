@@ -29,11 +29,11 @@ def tokenize(text):
     return clean_tokens
 
 # load data
-engine = create_engine('sqlite:///../Data/DisasterResponse.db')
+engine = create_engine('sqlite:///../data/DisasterResponse.db')
 df = pd.read_sql_table('table', engine)
 
 # load model
-model = joblib.load("../Models/classifier.pkl")
+model = joblib.load("../models/classifier.pkl")
 
 
 # index webpage displays cool visuals and receives user input text for model
@@ -54,29 +54,14 @@ def index():
     names = list(counts.index)
     
     # create visuals
+    #custom plotly graphs
     graphs = [
-        {
-            'data': [
-                Bar(
-                    x=cat_names,
-                    y=cat_counts
-                )
-            ],
-
-            'layout': {
-                'title': 'Distribution of Message Categories',
-                'yaxis': {
-                    'title': "Count"
-                },
-                'xaxis': {
-                    'title': "Category"
-                }
-            }
-        },
-                {
+         {
             'data': [
                 Histogram(
                     y=counts,
+                    marker=dict(color='#4CB391'),
+                    
                 )
             ],
 
@@ -90,6 +75,26 @@ def index():
                 },
             }
         },
+        {
+            'data': [
+                Bar(
+                    x=cat_names,
+                    y=cat_counts,
+                    marker=dict(color='#4CB391')
+                )
+            ],
+
+            'layout': {
+                'title': 'Distribution of Message Categories',
+                'yaxis': {
+                    'title': "Count"
+                },
+                'xaxis': {
+                    'title': "Category"
+                }
+            }
+        },
+
         {
             'data': [
                 Pie(
